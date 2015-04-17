@@ -7,6 +7,8 @@ import org.glassfish.jersey.server.ResourceConfig;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.ws.rs.core.UriBuilder;
+
 /**
  * Main class.
  *
@@ -19,7 +21,7 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-    	final String baseUri = "http://localhost:"+(System.getenv("PORT")!=null?System.getenv("PORT"):"8080")+"/";
+    	URI baseUri = getBaseURI(System.getenv("HOSTNAME"), Integer.valueOf(System.getenv("PORT")));
    	 
         // create a resource config that scans for JAX-RS resources and providers
         // in org.tfa package
@@ -29,7 +31,12 @@ public class Main {
         // exposing the Jersey application at BASE_URI
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl", baseUri));
-        GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), rc);
+        GrizzlyHttpServerFactory.createHttpServer(baseUri, rc);
     }
+    
+    private static URI getBaseURI(String hostname, int port) {
+        return UriBuilder.fromUri("http://0.0.0.0/").port(port).build();
+    }
+
 }
 
