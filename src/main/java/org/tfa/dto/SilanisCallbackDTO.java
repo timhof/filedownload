@@ -26,9 +26,9 @@ public class SilanisCallbackDTO {
 	
 	public String toString(){
 		StringBuilder str = new StringBuilder();
-		str.append("       name: " + name);
-		str.append("sessionUser: " + sessionUser);
-		str.append("  packageId: " + packageId);
+		str.append(String.format("       name: %s\n", name));
+		str.append(String.format("sessionUser: %s\n", sessionUser));
+		str.append(String.format("  packageId: %s\n", packageId));
 		return str.toString();
 	}
 }
