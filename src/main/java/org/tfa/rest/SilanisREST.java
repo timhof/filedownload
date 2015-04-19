@@ -20,6 +20,7 @@ public class SilanisREST {
 			System.out.println(dto.toString());
 			
 			DAOManager.getInstance().insertSilanisCallback(dto);
+			
 			return Response.ok().build();
 		}
 }

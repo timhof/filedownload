@@ -29,8 +29,8 @@ public class DAOManager {
     
     public void insertSilanisCallback(SilanisCallbackDTO request){
     	
-    	String insertTableSQL = "INSERT INTO SILANISCALLBACK"
-    			+ "(NAME, PACKAGEID, SESSIONUSER, CREATED_DATE) VALUES"
+    	String insertTableSQL = "insert into silanis_callback"
+    			+ "(name, packageid, sessionuser, datecreated) VALUES"
     			+ "(?,?,?,?)";
     	PreparedStatement preparedStatement;
 		try {
@@ -41,7 +41,7 @@ public class DAOManager {
     	preparedStatement.setString(3, request.getSessionUser());
     	preparedStatement.setTimestamp(4, getCurrentTimeStamp());
     	// execute insert SQL stetement
-    	preparedStatement .executeUpdate();
+    	preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class DAOManager {
     public List<SilanisCallbackDTO> getSilanisCallbacks() throws SQLException{
     	
     	List<SilanisCallbackDTO> callbacks = new ArrayList<SilanisCallbackDTO>();
-    	ResultSet rs = this.executeQuery("select name, packageid, sessionuser from salinascallback");
+    	ResultSet rs = this.executeQuery("select name, packageid, sessionuser from salinas_callback");
     	while(rs.next()){
     		SilanisCallbackDTO callback = new SilanisCallbackDTO();
     		callback.setName(rs.getString("name"));
