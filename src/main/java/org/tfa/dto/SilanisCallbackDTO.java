@@ -8,7 +8,7 @@ public class SilanisCallbackDTO {
 	private String name;
 	private String sessionUser;
 	private String packageId;
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm a z", timezone="CET")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm a zzz", timezone="CET")
 	private Date createdDate;
 	
 	public String getName() {
