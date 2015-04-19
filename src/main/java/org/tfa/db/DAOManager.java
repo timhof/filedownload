@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.InitialContext;
@@ -50,16 +52,25 @@ public class DAOManager {
     public List<SilanisCallbackDTO> getSilanisCallbacks() throws SQLException{
     	
     	List<SilanisCallbackDTO> callbacks = new ArrayList<SilanisCallbackDTO>();
-    	ResultSet rs = this.executeQuery("select name, packageid, sessionuser from salinas_callback");
+    	ResultSet rs = this.executeQuery("select name, packageid, sessionuser, datecreated from silanis_callback");
     	while(rs.next()){
     		SilanisCallbackDTO callback = new SilanisCallbackDTO();
     		callback.setName(rs.getString("name"));
     		callback.setPackageId(rs.getString("packageid"));
     		callback.setSessionUser(rs.getString("sessionuser"));
+    		callback.setCreatedDate(getDateTime(rs.getTimestamp("datecreated")));
     		callbacks.add(callback);
     	}
     	return callbacks;
     }
+    
+    private Date getDateTime(Timestamp timestamp){
+		Date date = null;
+		if (timestamp != null){
+		    date = new java.util.Date(timestamp.getTime());
+		}
+		return date;
+	}
     
     private static java.sql.Timestamp getCurrentTimeStamp() {
     	 

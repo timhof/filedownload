@@ -1,9 +1,12 @@
 package org.tfa.dto;
 
+import java.util.Date;
+
 public class SilanisCallbackDTO {
 	private String name;
 	private String sessionUser;
 	private String packageId;
+	private Date createdDate;
 	
 	public String getName() {
 		return name;
@@ -24,6 +27,12 @@ public class SilanisCallbackDTO {
 		this.packageId = packageId;
 	}
 	
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
 	public String toString(){
 		StringBuilder str = new StringBuilder();
 		str.append(String.format("       name: %s\n", name));
