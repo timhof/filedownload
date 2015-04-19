@@ -2,10 +2,13 @@ package org.tfa.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class SilanisCallbackDTO {
 	private String name;
 	private String sessionUser;
 	private String packageId;
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm a z")
 	private Date createdDate;
 	
 	public String getName() {

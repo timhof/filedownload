@@ -55,9 +55,9 @@ public class DAOManager {
     	ResultSet rs = this.executeQuery("select name, packageid, sessionuser, datecreated from silanis_callback");
     	while(rs.next()){
     		SilanisCallbackDTO callback = new SilanisCallbackDTO();
-    		callback.setName(rs.getString("name"));
-    		callback.setPackageId(rs.getString("packageid"));
-    		callback.setSessionUser(rs.getString("sessionuser"));
+    		callback.setName(rs.getString("name").trim());
+    		callback.setPackageId(rs.getString("packageid").trim());
+    		callback.setSessionUser(rs.getString("sessionuser").trim());
     		callback.setCreatedDate(getDateTime(rs.getTimestamp("datecreated")));
     		callbacks.add(callback);
     	}
