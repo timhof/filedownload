@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class SilanisCallbackDTO {
+	private Integer id;
 	private String name;
 	private String sessionUser;
 	private String packageId;
@@ -35,6 +36,12 @@ public class SilanisCallbackDTO {
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	public String toString(){
 		StringBuilder str = new StringBuilder();

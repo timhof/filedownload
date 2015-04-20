@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="page-header">
+      <div class="container">
+        <h1>Silanis Callback History</h1>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <table class="table table-striped">
+      	<thead><th>ID</th><th>NAME</th><th>PACKAGE ID</th><th>SESSION USER</th><th>DATE</th><th>ACTIONS</th></thead>
+      	<tbody id="callback-history-table"></tbody>
+      </table>
+    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/underscore-min.js"></script>
+        <script src="js/backbone-min.js"></script>
+        <script>
+        
+		var SilanisCallbackModel = Backbone.Model.extend({
+			idAttribute:"id"
+        });
+        
+        var SilanisCallbackCollection = Backbone.Collection.extend({
+        	model: SilanisCallbackModel,
+        	url: "/silanis/v1/callbacks"
+        });
+        
+        var SilanisCallbackView = Backbone.View.extend({
+            // el - stands for element. Every view has a element associate in with HTML
+            //      content will be rendered.
+            el: '#callback-history-table',
+            // It's the first function called when this view it's instantiated.
+            initialize: function(config){
+            	this.silanisCallbackCollection = config.silanisCallbackCollection;
+            	this.silanisCallbackCollection.bind('reset', this.render, this);
+                this.silanisCallbackCollection.bind('add', this.render, this);
+                this.silanisCallbackCollection.bind('remove', this.render, this);
+            },
+            events: {
+            	"click .delete-callback-button": "deleteCallback"
+            },
+            render: function(){
+            	this.$el.html("");
+            	var self = this;
+            	
+            	 $.each(this.silanisCallbackCollection.models, function(i, model) {
+                     var row = "<tr data-id='" + model.get("id") + "'><td>" + model.get("id") + "</td><td>" + model.get("name") + "</td><td>" + model.get("packageId") + "</td><td>" + model.get("sessionUser") + "</td><td>" + model.get("createdDate") + "</td><td><a href='#' class='delete-callback-button'>Delete</a></tr>";
+                     self.$el.append(row);
+                 });
+                 return this;
+            },
+            deleteCallback: function(e){
+            	e.preventDefault();
+        		var parentTr = $(e.target).closest('tr')[0];
+        		var callbackId = $(parentTr).data('id');
+        		var model = this.silanisCallbackCollection.get(callbackId);
+        		model.destroy();
+            }
+          });
+        
+        var silanisCallbackCollection = new SilanisCallbackCollection();
+        silanisCallbackCollection.fetch();
+        
+        var silanisCallbackView = new SilanisCallbackView({
+        	silanisCallbackCollection: silanisCallbackCollection
+        });
+        </script>
+    </body>
+</html>

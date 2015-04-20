@@ -1,5 +1,7 @@
 package org.tfa;
 
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
+import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -31,7 +33,11 @@ public class Main {
         // exposing the Jersey application at BASE_URI
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl", baseUri));
-        GrizzlyHttpServerFactory.createHttpServer(baseUri, rc);
+        
+        HttpServer httpServer = GrizzlyHttpServerFactory.createHttpServer(baseUri, rc);
+        
+        HttpHandler httpHandler = new CLStaticHttpHandler(HttpServer.class.getClassLoader(), "/webroot/");
+        httpServer.getServerConfiguration().addHttpHandler(httpHandler, "/app");
     }
     
     private static URI getBaseURI(String hostname, int port) {

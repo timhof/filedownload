@@ -29,14 +29,19 @@ public class DAOManager {
         return DAOManagerSingleton.INSTANCE.get();
     }  
     
-    public void insertSilanisCallback(SilanisCallbackDTO request){
+    public void deleteSilanisCallback(Integer callbackId) throws SQLException{
+
+			Statement stmt = this.con.createStatement();
+			stmt.executeUpdate("delete from silanis_callback where id=" + callbackId);
+		
+    }
+    
+    public void insertSilanisCallback(SilanisCallbackDTO request) throws SQLException{
     	
     	String insertTableSQL = "insert into silanis_callback"
     			+ "(name, packageid, sessionuser, datecreated) VALUES"
     			+ "(?,?,?,?)";
-    	PreparedStatement preparedStatement;
-		try {
-			preparedStatement = this.con.prepareStatement(insertTableSQL);
+    	PreparedStatement preparedStatement = this.con.prepareStatement(insertTableSQL);
 		
     	preparedStatement.setString(1, request.getName());
     	preparedStatement.setString(2, request.getPackageId());
@@ -44,17 +49,16 @@ public class DAOManager {
     	preparedStatement.setTimestamp(4, getCurrentTimeStamp());
     	// execute insert SQL stetement
     	preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
     }
+    
     public List<SilanisCallbackDTO> getSilanisCallbacks() throws SQLException{
     	
     	List<SilanisCallbackDTO> callbacks = new ArrayList<SilanisCallbackDTO>();
-    	ResultSet rs = this.executeQuery("select name, packageid, sessionuser, datecreated from silanis_callback");
+    	ResultSet rs = this.executeQuery("select id, name, packageid, sessionuser, datecreated from silanis_callback");
     	while(rs.next()){
     		SilanisCallbackDTO callback = new SilanisCallbackDTO();
+    		callback.setId(rs.getInt("id"));
     		callback.setName(rs.getString("name").trim());
     		callback.setPackageId(rs.getString("packageid").trim());
     		callback.setSessionUser(rs.getString("sessionuser").trim());

@@ -3,9 +3,11 @@ package org.tfa.rest;
 import java.sql.SQLException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,9 +25,14 @@ public class SilanisREST {
 			
 			System.out.println(dto.toString());
 			
-			DAOManager.getInstance().insertSilanisCallback(dto);
+			try {
+				DAOManager.getInstance().insertSilanisCallback(dto);
+				return Response.ok().build();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
 			
-			return Response.ok().build();
 		}
 		
 		@GET
@@ -36,7 +43,20 @@ public class SilanisREST {
 			try {
 				return Response.ok(DAOManager.getInstance().getSilanisCallbacks()).build();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
+		}
+		
+		@DELETE
+	    @Path("/callbacks/{callbackId}")
+	    public Response deleteCalback(@PathParam("callbackId") Integer callbackId) {
+			
+			try {
+				DAOManager.getInstance().deleteSilanisCallback(callbackId);
+				return Response.ok().build();
+			} catch (SQLException e) {
+				e.printStackTrace();
 				return Response.serverError().build();
 			}
 		}
