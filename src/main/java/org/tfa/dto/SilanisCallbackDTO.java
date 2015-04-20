@@ -9,6 +9,8 @@ public class SilanisCallbackDTO {
 	private String name;
 	private String sessionUser;
 	private String packageId;
+	private String message;
+	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm a zzz", timezone="EST")
 	private Date createdDate;
 	
@@ -42,6 +44,12 @@ public class SilanisCallbackDTO {
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
 	}
 	public String toString(){
 		StringBuilder str = new StringBuilder();

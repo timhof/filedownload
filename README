@@ -1,0 +1,17 @@
+mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 \
+-DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false \
+-DgroupId=org.tfa -DartifactId=filedownload -Dpackage=org.tfa \
+-DarchetypeVersion=2.17
+
+
+CREATE TABLE silanis_callback(
+   id serial primary key,
+   name char(50),
+   packageid char(50),
+   sessionuser char(50),
+   datecreated timestamp
+);
+
+heroku ps:scale web=1
+heroku pg:psql
+heroku logs --tail
