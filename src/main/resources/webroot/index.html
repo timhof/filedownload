@@ -47,7 +47,7 @@
     <div class="container">
       <!-- Example row of columns -->
       <table class="table table-striped">
-      	<thead><th>ID</th><th>NAME</th><th>PACKAGE ID</th><th>SESSION USER</th><th>DATE</th><th>ACTIONS</th></thead>
+      	<thead><th>ID</th><th>NAME</th><th>PACKAGE ID</th><th>SESSION USER</th><th>DOCUMENT ID</th><th>MESSAGE</th><th>DATE</th><th>ACTIONS</th></thead>
       	<tbody id="callback-history-table"></tbody>
       </table>
     </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -89,7 +89,15 @@
             	var self = this;
             	
             	 $.each(this.silanisCallbackCollection.models, function(i, model) {
-                     var row = "<tr data-id='" + model.get("id") + "'><td>" + model.get("id") + "</td><td>" + model.get("name") + "</td><td>" + model.get("packageId") + "</td><td>" + model.get("sessionUser") + "</td><td>" + model.get("createdDate") + "</td><td><a href='#' class='delete-callback-button'>Delete</a></tr>";
+                     var row = "<tr data-id='" + 
+                     model.get("id") + "'><td>" + 
+                     model.get("id") + "</td><td>" + 
+                     model.get("name") + "</td><td>" + 
+                     model.get("packageId") + "</td><td>" + 
+                     model.get("sessionUser") + "</td><td>" + 
+                     model.get("documentId") + "</td><td>" + 
+                     model.get("message") + "</td><td>" + 
+                     model.get("createdDate") + "</td><td><a href='#' class='delete-callback-button'>Delete</a></tr>";
                      self.$el.append(row);
                  });
                  return this;

@@ -39,14 +39,16 @@ public class DAOManager {
     public void insertSilanisCallback(SilanisCallbackDTO request) throws SQLException{
     	
     	String insertTableSQL = "insert into silanis_callback"
-    			+ "(name, packageid, sessionuser, datecreated) VALUES"
-    			+ "(?,?,?,?)";
+    			+ "(name, packageid, sessionuser, message, documentid, datecreated) VALUES"
+    			+ "(?,?,?,?,?,?)";
     	PreparedStatement preparedStatement = this.con.prepareStatement(insertTableSQL);
 		
     	preparedStatement.setString(1, request.getName());
     	preparedStatement.setString(2, request.getPackageId());
     	preparedStatement.setString(3, request.getSessionUser());
-    	preparedStatement.setTimestamp(4, getCurrentTimeStamp());
+    	preparedStatement.setString(4, request.getMessage());
+    	preparedStatement.setString(5, request.getDocumentId());
+    	preparedStatement.setTimestamp(6, getCurrentTimeStamp());
     	// execute insert SQL stetement
     	preparedStatement.executeUpdate();
 		
@@ -55,13 +57,24 @@ public class DAOManager {
     public List<SilanisCallbackDTO> getSilanisCallbacks() throws SQLException{
     	
     	List<SilanisCallbackDTO> callbacks = new ArrayList<SilanisCallbackDTO>();
-    	ResultSet rs = this.executeQuery("select id, name, packageid, sessionuser, datecreated from silanis_callback");
+    	ResultSet rs = this.executeQuery("select id, name, packageid, sessionuser, message, documentid, datecreated from silanis_callback");
     	while(rs.next()){
     		SilanisCallbackDTO callback = new SilanisCallbackDTO();
     		callback.setId(rs.getInt("id"));
     		callback.setName(rs.getString("name").trim());
+    		
+    		if(rs.getString("packageid") != null){
     		callback.setPackageId(rs.getString("packageid").trim());
+    		}
+    		if(rs.getString("sessionuser") != null){
     		callback.setSessionUser(rs.getString("sessionuser").trim());
+    		}
+    		if(rs.getString("documentid") != null){
+    		callback.setDocumentId(rs.getString("documentid").trim());
+    		}
+    		if(rs.getString("message") != null){
+    		callback.setMessage(rs.getString("message").trim());
+    		}
     		callback.setCreatedDate(getDateTime(rs.getTimestamp("datecreated")));
     		callbacks.add(callback);
     	}

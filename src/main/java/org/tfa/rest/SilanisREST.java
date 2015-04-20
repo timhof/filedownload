@@ -1,6 +1,7 @@
 package org.tfa.rest;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,17 +39,22 @@ public class SilanisREST {
 		@POST
 	    @Consumes(MediaType.APPLICATION_JSON)
 	    @Path("/callback")
-	    public Response callback(String dto) {
+	    public Response callback(HashMap<String, String> requestBody) {
 			
-			System.out.println(dto);
-			return Response.ok().build();
-//			try {
-//				DAOManager.getInstance().insertSilanisCallback(dto);
-//				return Response.ok().build();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//				return Response.serverError().build();
-//			}
+			SilanisCallbackDTO callback = new SilanisCallbackDTO();
+			callback.setName(requestBody.get("name"));
+			callback.setPackageId(requestBody.get("packageId"));
+			callback.setSessionUser(requestBody.get("sessionUser"));
+			callback.setMessage(requestBody.get("message"));
+			callback.setDocumentId(requestBody.get("documentId"));
+
+			try {
+				DAOManager.getInstance().insertSilanisCallback(callback);
+				return Response.ok().build();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
 			
 		}
 		

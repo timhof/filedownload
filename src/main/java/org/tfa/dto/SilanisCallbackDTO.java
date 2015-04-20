@@ -10,6 +10,7 @@ public class SilanisCallbackDTO {
 	private String sessionUser;
 	private String packageId;
 	private String message;
+	private String documentId;
 	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm a zzz", timezone="EST")
 	private Date createdDate;
@@ -50,6 +51,12 @@ public class SilanisCallbackDTO {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public String getDocumentId() {
+		return documentId;
+	}
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
 	}
 	public String toString(){
 		StringBuilder str = new StringBuilder();
