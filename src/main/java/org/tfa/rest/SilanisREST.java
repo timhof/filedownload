@@ -39,6 +39,23 @@ public class SilanisREST {
 		@POST
 	    @Consumes(MediaType.APPLICATION_JSON)
 	    @Path("/callback")
+	    public Response callback(String dto) {
+			
+			System.out.println(dto);
+			return Response.ok().build();
+//			try {
+//				DAOManager.getInstance().insertSilanisCallback(dto);
+//				return Response.ok().build();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//				return Response.serverError().build();
+//			}
+			
+		}
+		
+		@POST
+	    @Consumes(MediaType.APPLICATION_JSON)
+	    @Path("/callback")
 	    public Response callback(HashMap<String, String> requestBody) {
 			
 			SilanisCallbackDTO callback = new SilanisCallbackDTO();
