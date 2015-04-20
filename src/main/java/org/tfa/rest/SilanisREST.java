@@ -42,14 +42,56 @@ public class SilanisREST {
 	    public Response callback(String dto) {
 			
 			System.out.println(dto);
-			return Response.ok().build();
-//			try {
-//				DAOManager.getInstance().insertSilanisCallback(dto);
-//				return Response.ok().build();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//				return Response.serverError().build();
-//			}
+			
+			String name = null;
+			if(dto.indexOf("name\":\"") >= 0){
+				int nameStart = dto.indexOf("name\":\"")+("name\":\"".length());
+				int nameEnd = dto.indexOf("\"", nameStart);
+				name = dto.substring(nameStart, nameEnd);
+			}
+			
+			String packageId = null;
+			if(dto.indexOf("packageId\":\"") >= 0){
+				int packageIdStart = dto.indexOf("packageId\":\"")+("packageId\":\"".length());
+				int packageIdEnd = dto.indexOf("\"", packageIdStart);
+				packageId = dto.substring(packageIdStart, packageIdEnd);
+			}
+			
+			String documentId = null;
+			if(dto.indexOf("documentId\":\"") >= 0){
+				int documentIdStart = dto.indexOf("documentId\":\"")+("documentId\":\"".length());
+				int documentIdEnd = dto.indexOf("\"", documentIdStart);
+				documentId = dto.substring(documentIdStart, documentIdEnd);
+			}
+			
+			String message = null;
+			if(dto.indexOf("message\":\"") >= 0){
+			int messageStart = dto.indexOf("message\":\"")+("message\":\"".length());
+			int messageEnd = dto.indexOf("\"", messageStart);
+			message = dto.substring(messageStart, messageEnd);
+			}
+			
+			String sessionUser = null;
+			if(dto.indexOf("sessionUser\":\"") >= 0){
+			int sessionUserStart = dto.indexOf("sessionUser\":\"")+("sessionUser\":\"".length());
+			int sessionUserEnd = dto.indexOf("\"", sessionUserStart);
+			sessionUser = dto.substring(sessionUserStart, sessionUserEnd);
+			}
+			
+			SilanisCallbackDTO callback = new SilanisCallbackDTO();
+			callback.setName(name);
+			callback.setPackageId(packageId);
+			callback.setSessionUser(sessionUser);
+			callback.setMessage(message);
+			callback.setDocumentId(documentId);
+			
+			try {
+				DAOManager.getInstance().insertSilanisCallback(callback);
+				return Response.ok().build();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
 			
 		}
 		
