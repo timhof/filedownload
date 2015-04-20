@@ -53,27 +53,27 @@ public class SilanisREST {
 			
 		}
 		
-		@POST
-	    @Consumes(MediaType.APPLICATION_JSON)
-	    @Path("/callback")
-	    public Response callback(HashMap<String, String> requestBody) {
-			
-			SilanisCallbackDTO callback = new SilanisCallbackDTO();
-			callback.setName(requestBody.get("name"));
-			callback.setPackageId(requestBody.get("packageId"));
-			callback.setSessionUser(requestBody.get("sessionUser"));
-			callback.setMessage(requestBody.get("message"));
-			callback.setDocumentId(requestBody.get("documentId"));
-
-			try {
-				DAOManager.getInstance().insertSilanisCallback(callback);
-				return Response.ok().build();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return Response.serverError().build();
-			}
-			
-		}
+//		@POST
+//	    @Consumes(MediaType.APPLICATION_JSON)
+//	    @Path("/callback")
+//	    public Response callback(HashMap<String, String> requestBody) {
+//			
+//			SilanisCallbackDTO callback = new SilanisCallbackDTO();
+//			callback.setName(requestBody.get("name"));
+//			callback.setPackageId(requestBody.get("packageId"));
+//			callback.setSessionUser(requestBody.get("sessionUser"));
+//			callback.setMessage(requestBody.get("message"));
+//			callback.setDocumentId(requestBody.get("documentId"));
+//
+//			try {
+//				DAOManager.getInstance().insertSilanisCallback(callback);
+//				return Response.ok().build();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//				return Response.serverError().build();
+//			}
+//			
+//		}
 		
 		@GET
 	    @Produces(MediaType.APPLICATION_JSON)
