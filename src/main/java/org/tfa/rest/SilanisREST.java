@@ -87,7 +87,9 @@ public class SilanisREST {
 	    public Response listCalbacks() {
 			
 			try {
-				return Response.ok(DAOManager.getInstance().getSilanisCallbacks()).build();
+				Gson gson = new GsonBuilder().setPrettyPrinting().create();
+				String json = gson.toJson(DAOManager.getInstance().getSilanisCallbacks());
+				return Response.ok(json).build();
 			} catch (SQLException e) {
 				e.printStackTrace();
 				return Response.serverError().build();
