@@ -1,11 +1,18 @@
 package org.tfa.dto;
 
+import java.util.List;
+
+import com.silanis.esl.api.model.AttachmentRequirement;
+
 public class SignerDTO {
 
 	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String type;
+	List<AttachmentRequirement> attachmentRequirements;
+	
 	public String getId() {
 		return id;
 	}
@@ -29,5 +36,18 @@ public class SignerDTO {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public List<AttachmentRequirement> getAttachmentRequirements() {
+		return attachmentRequirements;
+	}
+	public void setAttachmentRequirements(
+			List<AttachmentRequirement> attachmentRequirements) {
+		this.attachmentRequirements = attachmentRequirements;
 	}
 }

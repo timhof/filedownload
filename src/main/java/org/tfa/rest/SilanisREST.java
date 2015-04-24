@@ -179,12 +179,18 @@ public class SilanisREST {
 						signerDTO.setFirstName(signer.getFirstName());
 						signerDTO.setLastName(signer.getLastName());
 
+						signerDTO.setType(role.getType());
+						
+						signerDTO.setAttachmentRequirements(role.getAttachmentRequirements());
+						
 						signerIdMap.put(role.getId(), signerDTO);
 					}
 				}
 				
 				PackageSummaryDTO packageDTO = new PackageSummaryDTO();
-				
+				packageDTO.setStatus(documentPackage.getStatus());
+				packageDTO.setUpdated(documentPackage.getUpdated());
+				packageDTO.setName(documentPackage.getName());
 				for(com.silanis.esl.api.model.Document doc : documentPackage.getDocuments()){
 					DocumentSummaryDTO documentSummaryDTO = new DocumentSummaryDTO();
 					packageDTO.addDocumentSummary(documentSummaryDTO);
