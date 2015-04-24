@@ -10,8 +10,8 @@ public class DocumentSignerDTO {
 	String id;
 	Date signedDate;
 	boolean completed;
-	List<String[]> fieldValues;
 	SignerDTO signer;
+	List<String[]> fieldValues;
 	
 	public String getName() {
 		return name;

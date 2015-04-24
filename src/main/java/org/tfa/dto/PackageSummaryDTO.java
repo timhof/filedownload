@@ -6,10 +6,10 @@ import java.util.List;
 
 public class PackageSummaryDTO {
 
-	private List<DocumentSummaryDTO> documents;
+	private String name;
 	private String status;
 	private Date updated;
-	private String name;
+	private List<DocumentSummaryDTO> documents;
 	
 	public List<DocumentSummaryDTO> getDocuments() {
 		return documents;

@@ -5,9 +5,9 @@ import java.util.List;
 
 public class DocumentSummaryDTO {
 
-	private List<DocumentSignerDTO> documentSigners;
 	private String name;
 	private String id;
+	private List<DocumentSignerDTO> documentSigners;
 	
 	public List<DocumentSignerDTO> getDocumentSigners() {
 		return documentSigners;
