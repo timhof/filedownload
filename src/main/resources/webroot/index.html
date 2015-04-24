@@ -89,13 +89,14 @@
             	var self = this;
             	
             	 $.each(this.silanisCallbackCollection.models, function(i, model) {
+            		 
                      var row = "<tr data-id='" + 
                      model.get("id") + "'><td>" + 
                      model.get("id") + "</td><td>" + 
                      model.get("name") + "</td><td>" + 
-                     model.get("packageId") + "</td><td>" + 
+                     "<a href='/silanis/v1/package/" + model.get("packageId") + "/summary'>" + model.get("packageId") + "</a></td><td>" + 
                      model.get("sessionUser") + "</td><td>" + 
-                     model.get("documentId") + "</td><td>" + 
+                     (model.get("documentId") !== undefined ? ("<a href='/silanis/v1/package/" + model.get("packageId") + "/document/" + model.get("documentId") + "/pdf'>" + model.get("documentId") + "</a>") : "&nbsp;") + "</td><td>" + 
                      model.get("message") + "</td><td>" + 
                      model.get("createdDate") + "</td><td><a href='#' class='delete-callback-button'>Delete</a></tr>";
                      self.$el.append(row);

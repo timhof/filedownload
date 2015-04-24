@@ -9,9 +9,46 @@ CREATE TABLE silanis_callback(
    name char(50),
    packageid char(50),
    sessionuser char(50),
+   message char (250),
+   documentid char(50),
    datecreated timestamp
 );
+
+alter table silanis_callback add column documentid character varying(50);
+alter table silanis_callback add column messageid character varying(250);
+
 
 heroku ps:scale web=1
 heroku pg:psql
 heroku logs --tail
+
+GET /packages/{packageId} - Retrieve information about a single document package
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592
+
+GET /packages/{packageId}/signingStatus - Retrieve the signing status of a document package
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/signingStatus
+
+GET /packages/{packageId}/roles - Retrieve all roles for a document package
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/roles
+
+GET /account - Retrieve details about an account
+http://localhost:8082/silanis/v1/account
+
+GET /account/senders - Retrieve a list of the users in an account
+http://localhost:8082/silanis/v1/account/senders
+
+GET /packages/{packageId}/documents/{documentId} - Retrieve a single document
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/document/2243330ea1d9bcbb
+
+GET /packages/{packageId}/documents/{documentId}/approvals/{approvalId} - Retrieve an existing approval
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/document/2243330ea1d9bcbb/approval/liEKakNeTXUV
+
+GET /packages/{packageId}/documents/{documentId}/pdf - Retrieve a pdf document
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/document/2243330ea1d9bcbb/pdf
+
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/signers
+http://localhost:8082/silanis/v1/package/895d888a-0760-4d08-b4b2-3021a09cc592/documents
+
+Try download file? Document downloaded with packageId and documentId
+How send emails?
+Tomcat + CAS = WS

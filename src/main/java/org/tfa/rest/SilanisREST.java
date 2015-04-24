@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,18 +25,30 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.tfa.db.DAOManager;
+import org.tfa.dto.DocumentSignerDTO;
+import org.tfa.dto.DocumentSummaryDTO;
+import org.tfa.dto.PackageSummaryDTO;
+import org.tfa.dto.SignerDTO;
 import org.tfa.dto.SilanisCallbackDTO;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.silanis.esl.api.model.Approval;
+import com.silanis.esl.api.model.Role;
 import com.silanis.esl.sdk.Document;
 import com.silanis.esl.sdk.DocumentPackage;
 import com.silanis.esl.sdk.EslClient;
+import com.silanis.esl.sdk.Field;
 import com.silanis.esl.sdk.PackageId;
+import com.silanis.esl.sdk.Signature;
 import com.silanis.esl.sdk.Signer;
 
 @Path("silanis/v1")
@@ -117,7 +130,8 @@ public class SilanisREST {
 	    public Response getPackageSigners(@PathParam("packageId") String packageId)  {
 			
 			try {
-				DocumentPackage documentPackage = getPackage(packageId);
+				EslClient eslClient = getEslClient();
+				DocumentPackage documentPackage = eslClient.getPackage(new PackageId(packageId));
 				Map<String, Signer> signers = documentPackage.getSigners();
 				
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -135,11 +149,64 @@ public class SilanisREST {
 	    public Response getPackageDocuments(@PathParam("packageId") String packageId)  {
 			
 			try {
-				DocumentPackage documentPackage = getPackage(packageId);
+				EslClient eslClient = getEslClient();
+				DocumentPackage documentPackage = eslClient.getPackage(new PackageId(packageId));
 				Collection<Document> documents = documentPackage.getDocuments();
 				
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 				String json = gson.toJson(documents);
+				return Response.ok(json).build();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
+		}
+		
+		@GET
+	    @Produces(MediaType.APPLICATION_JSON)
+	    @Path("/package/{packageId}/summary")
+	    public Response getPackageSummary(@PathParam("packageId") String packageId)  {
+			
+			try {
+				com.silanis.esl.api.model.Package documentPackage = getPackage(packageId);
+				Map<String, SignerDTO> signerIdMap = new HashMap<String, SignerDTO>();
+				for(Role role : documentPackage.getRoles()){
+					if(!role.getSigners().isEmpty()){
+						com.silanis.esl.api.model.Signer signer = role.getSigners().iterator().next();
+						SignerDTO signerDTO = new SignerDTO();
+						signerDTO.setId(role.getId());
+						signerDTO.setEmail(signer.getEmail());
+						signerDTO.setFirstName(signer.getFirstName());
+						signerDTO.setLastName(signer.getLastName());
+
+						signerIdMap.put(role.getId(), signerDTO);
+					}
+				}
+				
+				PackageSummaryDTO packageDTO = new PackageSummaryDTO();
+				
+				for(com.silanis.esl.api.model.Document doc : documentPackage.getDocuments()){
+					DocumentSummaryDTO documentSummaryDTO = new DocumentSummaryDTO();
+					packageDTO.addDocumentSummary(documentSummaryDTO);
+					documentSummaryDTO.setId(doc.getId());
+					documentSummaryDTO.setName(doc.getName());
+					
+					for(Approval approval : doc.getApprovals()){
+						DocumentSignerDTO docApproval = new DocumentSignerDTO();
+						documentSummaryDTO.addDocumentSigner(docApproval);
+						if(approval.getSigned() != null){
+							docApproval.setSignedDate(approval.getSigned());
+							docApproval.setCompleted(true);
+						}
+						SignerDTO signerDTO = signerIdMap.get(approval.getRole());
+						docApproval.setSigner(signerDTO);
+						for(com.silanis.esl.api.model.Field field : approval.getFields()){
+							docApproval.addField(new String[]{field.getName(), field.getValue()});
+						}
+					}
+				}
+				Gson gson = new GsonBuilder().setPrettyPrinting().create();
+				String json = gson.toJson(packageDTO);
 				return Response.ok(json).build();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -228,6 +295,48 @@ public class SilanisREST {
 		}
 		
 		@GET
+	    @Produces("application/pdf")
+	    @Path("package/{packageId}/document/{documentId}/pdf")
+	    public Response getDocument(@PathParam("packageId") String packageId, @PathParam("documentId") String documentId)  {
+				
+				CloseableHttpClient httpClient = HttpClients.custom().build();
+				try {
+				HttpGet getRequest = new HttpGet(
+					"https://sandbox.e-signlive.com/api/packages/" + packageId + "/documents/" + documentId + "/pdf");
+				getRequest.addHeader("accept", "application/pdf; esl-api-version=10.6");
+				getRequest.setHeader("Authorization", "Basic " + getSilanisProperties().getProperty("apikey"));
+				HttpResponse response = httpClient.execute(getRequest);
+		 
+				if (response.getStatusLine().getStatusCode() != 200) {
+					throw new RuntimeException("Failed : HTTP error code : "
+					   + response.getStatusLine().getStatusCode());
+				}
+				
+				return Response.ok(EntityUtils.toByteArray(response.getEntity())).build();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			
+			} 
+		}
+		
+		@GET
+	    @Produces(MediaType.APPLICATION_JSON)
+	    @Path("package/{packageId}/document/{documentId}/approval/{approvalId}")
+	    public Response getApprovalInfo(@PathParam("packageId") String packageId, @PathParam("documentId") String documentId, @PathParam("approvalId") String approvalId)  {
+			
+			try {
+				
+				String prettyJsonString = getResponse("packages/" + packageId + "/documents/" + documentId + "/approvals/" + approvalId);
+				
+				return Response.ok(prettyJsonString).build();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Response.serverError().build();
+			}
+		}
+		
+		@GET
 	    @Produces(MediaType.APPLICATION_JSON)
 	    @Path("user/{sessionUser}/journal")
 	    public Response getUserJournal(@PathParam("sessionUser") String sessionUser)  {
@@ -256,9 +365,25 @@ public class SilanisREST {
 			}
 		}
 		
-		private DocumentPackage getPackage(String packageId) throws IOException{
-			EslClient eslClient = getEslClient();
-			return eslClient.getPackage(new PackageId(packageId));
+		private com.silanis.esl.api.model.Package getPackage(String packageId) throws IOException{
+//			EslClient eslClient = getEslClient();
+//			return eslClient.getPackage(new PackageId(packageId));
+			
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			HttpGet getRequest = new HttpGet(
+				"https://sandbox.e-signlive.com/api/packages/" + packageId);
+			getRequest.addHeader("accept", "application/json; esl-api-version=10.6");
+			getRequest.setHeader("Authorization", "Basic " + getSilanisProperties().getProperty("apikey"));
+			HttpResponse response = httpClient.execute(getRequest);
+	 
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+				   + response.getStatusLine().getStatusCode());
+			}
+			
+			ObjectMapper objectMapper=new ObjectMapper();
+			com.silanis.esl.api.model.Package documentPackage = objectMapper.readValue(response.getEntity().getContent(), com.silanis.esl.api.model.Package.class);
+			return documentPackage;
 		}
 		
 		private EslClient getEslClient() throws IOException{
